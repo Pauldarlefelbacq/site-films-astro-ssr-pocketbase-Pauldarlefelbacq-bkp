@@ -7,6 +7,7 @@ import type {
   RoleResponse,
 } from "../../pocketbase-types";
 import LinkPersonne from "../../components/LinkPersonne.astro";
+import ImgPb from "../../components/ImgPb.astro";
 export const prerender = false;
 
 const { id, titre_slug } = Astro.params;
@@ -47,9 +48,10 @@ const releaseDate = film.date_sortie
   <div>
     <div>
       <h1>{film.titre || "Film"}</h1>
+      <ImgPb record={film} image={film.image} alt={`image de ${film.titre}`}/>
       <p>{film.genre?.join(", ") || "Genres non definis"}</p>
     </div>
-    {isLoggedIn && <a href={`/films/edit/${id}-${titre_slug}`}>Editer</a>}
+    {isLoggedIn && <a href={`/films/edit/${id}`}>Editer</a>}
   </div>
 
   <div>
@@ -83,7 +85,7 @@ const releaseDate = film.date_sortie
 
   <div>
     <p>Synopsis</p>
-    <p>{film.synopsis || "Non specifie"}</p>
+    <div set:html={film.synopsis}></div>
   </div>
 
   

@@ -1,45 +1,21 @@
 ﻿---
+import LinkFilms from "../../components/LinkFilms.astro";
 import Layout from "../../layouts/Layout.astro";
-import slug from "slug";
+export const prerender = false;
 
 const films = await Astro.locals.pb.collection("film").getFullList();
-const isLoggedIn = Astro.locals.pb.authStore.isValid;
+console.log(films);
+
 ---
-
-<Layout pageTitle="Films - PocketBase Cinema">
-  <div>
-    <h1>Films</h1>
-    {isLoggedIn && (
-      <a href="/films/edit/new-nouveau">
-        Ajouter un film
-      </a>
-    )}
-  </div>
-
-  <ul>
-    {films.map((film) => (
-      <li>
-        <div>
-          <a
-           
-            href={`/films/${film.id}-${slug(film.titre || "film")}`}
-          >
-            {film.titre || "Film"}
-          </a>
-          <p>
-            {film.genre?.join(", ") || "Genres non definis"}
-          </p>
-        </div>
-        {isLoggedIn && (
-          <a
-           
-            href={`/films/edit/${film.id}-${slug(film.titre || "film")}`}
-          >
-            Editer
-          </a>
-        )}
-      </li>
-    ))}
-  </ul>
+<Layout>
+    <h1>Hey films</h1>
+    <ul>
+        {films.map((film) => (
+            <li><LinkFilms film={film}/></li>
+        ))}
+    </ul>
+    { 
+    Astro.locals.pb.authStore.isValid &&
+    <a href="/films/edit/">Ajouter un nouveau film</a>
+    }
 </Layout>
-

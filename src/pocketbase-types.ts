@@ -148,6 +148,7 @@ export type PersonneRecord = {
 export type RoleRecord = {
 	acteur?: RecordIdString
 	created: IsoAutoDateString
+	film?: RecordIdString
 	id: string
 	nom?: string
 	updated: IsoAutoDateString

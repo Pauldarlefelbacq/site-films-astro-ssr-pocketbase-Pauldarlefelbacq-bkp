@@ -88,7 +88,7 @@ if (personne.date_naissance) {
       <ul>
         { personne.expand?.role_via_acteur?.map((role) =>
             <li>
-              Joue le role de {role.nom} dans le film <LinkFilms film={ role.expand?.film } />
+              Joue le role de <strong>{role.nom}</strong> dans le film <LinkFilms film={ role.expand?.film } />
             </li> )}
       </ul>
     </div>
