@@ -1,0 +1,106 @@
+﻿---
+import { Debug } from "astro:components";
+import Layout from "../../layouts/Layout.astro";
+import type {
+  FilmsResponse,
+  PersonneResponse,
+  RoleResponse,
+} from "../../pocketbase-types";
+import LinkPersonne from "../../components/LinkPersonne.astro";
+export const prerender = false;
+
+const { id, titre_slug } = Astro.params;
+const isLoggedIn = Astro.locals.pb.authStore.isValid;
+
+const film = await Astro.locals.pb
+  .collection<
+    FilmsResponse<{
+      producteur: PersonneResponse;
+      realisateur: PersonneResponse[];
+      scenariste: PersonneResponse[];
+      Role_via_film: RoleResponse<{ acteur: PersonneResponse }>[];
+    }>
+  >("Films")
+  .getOne(id, {
+    expand: "producteur,realisateur,scenariste,Role_via_film.acteur",
+  });
+
+const nameFor = (personne) => {
+  if (!personne) return "";
+  const parts = [personne.prenom, personne.nom].filter(Boolean);
+  return parts.length ? parts.join(" ") : personne.id;
+};
+
+const listNames = (list) => {
+  if (!Array.isArray(list) || list.length === 0) return "Non specifie";
+  return list.map(nameFor).join(", ");
+};
+
+const pageTitle = film.titre ? `${film.titre} - Film` : "Film";
+const releaseDate = film.dete_de_sortie
+  ? new Date(film.dete_de_sortie).toLocaleDateString("fr-FR")
+  : "Non specifie";
+---
+
+
+<Layout pageTitle={pageTitle}>
+  <div>
+    <div>
+      <h1>{film.titre || "Film"}</h1>
+      <p>{film.genres?.join(", ") || "Genres non definis"}</p>
+    </div>
+    {isLoggedIn && <a href={`/films/edit/${id}-${titre_slug}`}>Editer</a>}
+  </div>
+
+  <div>
+    <div>
+      <p>Date de sortie</p>
+      <p>{releaseDate}</p>
+    </div>
+    <div>
+      <p>Duree (min)</p>
+      <p>{film.dure_min ?? "Non specifie"}</p>
+    </div>
+    <div>
+      <p>Producteur</p>
+      <p>
+        {
+          film.expand?.producteur
+            ? nameFor(film.expand.producteur)
+            : "Non specifie"
+        }
+      </p>
+    </div>
+    <div>
+      <p>Realisateur</p>
+      <p>{listNames(film.expand?.realisateur)}</p>
+    </div>
+    <div>
+      <p>Scenariste</p>
+      <p>{listNames(film.expand?.scenariste)}</p>
+    </div>
+  </div>
+
+  <div>
+    <p>Synopsis</p>
+    <p>{film.synopsis || "Non specifie"}</p>
+  </div>
+
+  
+  <p>{isLoggedIn && <a href={`/films/ajout-role/${id}`}>Ajouter un role</a>}</p>
+  
+  {film.expand?.Role_via_film && <div>
+    <p>Roles:</p>
+      <ul>
+        {film.expand.Role_via_film.map((role) => (
+          <li>
+            {role.nom} - <LinkPersonne personne={role.expand?.acteur} />
+            {isLoggedIn && <a href={`/films/supprimer-role/${id}-${role.id}`}>Supprimer</a>}
+          </li>
+        ))}
+      </ul>
+  </div>
+  }
+
+  <p><a href="/films"> Retour a la liste des films </a></p>
+</Layout>

@@ -1,0 +1,32 @@
+﻿---
+const { pageTitle = "PocketBase Cinema" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <header>
+      <div>
+        <a href="/">PocketBase Cinema</a>
+        <nav>
+          <a href="/">Accueil</a>
+          <a href="/films">Films</a>
+          <a href="/personnes">Personnes</a>
+          <a href="/authpassword">Login</a>
+        </nav>
+      </div>
+    </header>
+    <main>
+      <slot />
+    </main>
+  </body>
+</html>
+
