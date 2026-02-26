@@ -27,13 +27,13 @@ const film = await Astro.locals.pb
   });
 
 const nameFor = (personne) => {
-  if (!personne) return "";
-  const parts = [personne.prenom, personne.nom].filter(Boolean);
-  return parts.length ? parts.join(" ") : personne.id;
+  if (!personne || typeof personne !== "object") return "Non spécifié";
+  const parts = [personne?.prenom, personne?.nom].filter(Boolean);
+  return parts.length ? parts.join(" ") : personne?.id || "Non spécifié";
 };
 
 const listNames = (list) => {
-  if (!Array.isArray(list) || list.length === 0) return "Non specifie";
+  if (!Array.isArray(list) || list.length === 0) return "Non spécifié";
   return list.map(nameFor).join(", ");
 };
 
@@ -45,6 +45,7 @@ const releaseDate = film.date_sortie
 
 
 <Layout pageTitle={pageTitle}>
+  <!-- <Debug { film }/> -->
   <div>
     <div>
       <h1>{film.titre || "Film"}</h1>
@@ -65,17 +66,11 @@ const releaseDate = film.date_sortie
     </div>
     <div>
       <p>Producteur</p>
-      <p>
-        {
-          film.expand?.producteur
-            ? nameFor(film.expand.producteur)
-            : "Non specifie"
-        }
-      </p>
+      <p>{nameFor(film.expand?.realisateur)}</p>
     </div>
     <div>
       <p>Realisateur</p>
-      <p>{listNames(film.expand?.realisateur)}</p>
+      <p>{listNames(film.expand?.producteur)}</p>
     </div>
     <div>
       <p>Scenariste</p>

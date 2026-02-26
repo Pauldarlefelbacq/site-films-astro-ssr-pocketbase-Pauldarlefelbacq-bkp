@@ -4,20 +4,22 @@ export const prerender = false
 import Layout from "../../../layouts/Layout.astro";
 import { FilmGenreOptions, FilmPaysOptions, type FilmResponse } from '../../../pocketbase-types';
 import { PersonneProfessionOptions } from '../../../pocketbase-types';
+import Multiselect from '@vueform/multiselect';
+import SelectPersonne from '../../../components/SelectPersonne.vue';
 const { id: idParam } = Astro.params;
 let message = null;
 let film = {} as FilmResponse;
 const personne = await Astro.locals.pb.collection("personne").getFullList()
 
-if (id)
+if (idParam)
 {
-    film = await Astro.locals.pb.collection("film").getOne(id)
+    film = await Astro.locals.pb.collection("film").getOne(idParam)
 }
 
 if (Astro.request.method === "POST") {
     const data = await Astro.request.formData();
-    const filmCree = await (id
-            ?(Astro.locals.pb.collection("film").update(id!, data))
+    const filmCree = await (idParam
+            ?(Astro.locals.pb.collection("film").update(idParam!, data))
             :(Astro.locals.pb.collection("film").create(data))
         )
         .catch(err => {
@@ -32,7 +34,7 @@ if (Astro.request.method === "POST") {
 }
 ---
 <Layout>
-        <h1>{id ? "Editer une film" : "Ajouter une film"}</h1>
+        <h1>{idParam ? "Editer une film" : "Ajouter une film"}</h1>
     
     {
     message && 
@@ -41,8 +43,8 @@ if (Astro.request.method === "POST") {
     <form method="post" enctype="multipart/form-data">
 
         {
-        id && 
-        <input type ="hidden" name ="id" value = { id }>
+        idParam && 
+        <input type ="hidden" name ="id" value = { idParam }>
         }
         <label>Image
             <input type="file" name="image">
@@ -94,7 +96,10 @@ if (Astro.request.method === "POST") {
             }
         </fieldset>
         <select name="realisateur" class="mt-1 block">
-            <option>Choisir un réalisateur</option>
+            <label>
+                Choisir un réalisateur
+            {/* <SelectPersonne personne={personne} name='realisateur' value={film.realisateur} client:load /> */}
+            </label>
             {
                 personne.map((p) =>(
                 <option
@@ -105,7 +110,12 @@ if (Astro.request.method === "POST") {
                 ))
             }
         </select>
-        <select name="producteur" class="mt-1 block" multiple>
+        <label>
+            Réalisateur
+            <SelectPersonne personne={personne} name='realisateur' value={film.realisateur}  placeholder='help' client:load />
+        </label>
+
+        {/* <select name="producteur" class="mt-1 block" multiple>
             <option>Choisir un producteur</option>
             {
                 personne.map((p) =>(
@@ -116,8 +126,12 @@ if (Astro.request.method === "POST") {
                     </option>
                 ))
             }
-        </select>
-        <select name="producteur" class="mt-1 block" multiple>
+        </select> */}
+        <label>
+            Producteur
+            <SelectPersonne personne={personne} name='producteur' value={film.producteur} placeholder='Hey' client:load />
+        </label>
+        {/* <select name="scenariste" class="mt-1 block" multiple placeholder="Producteur">
             <option>Choisir un scénariste</option>
             {
                 personne.map((p) =>(
@@ -128,10 +142,11 @@ if (Astro.request.method === "POST") {
                     </option>
                 ))
             }
-        </select>
+        </select> */}
+        <SelectPersonne personne={personne} name='scenariste' value={film.scenariste} multiple placeholder='scenarioooo' client:load />
         
         <button>
-            { id ? "Mettre à jour" : "Ajouter" }
+            { idParam ? "Mettre à jour" : "Ajouter" }
         </button>
     </form>
 </Layout>
