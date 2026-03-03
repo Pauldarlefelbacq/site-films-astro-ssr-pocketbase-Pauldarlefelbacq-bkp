@@ -19,9 +19,7 @@ jobs:
         cache: 'npm'
 
     - name: Install dependencies
-      run: |
-        npm ci --include=optional
-        npm install @tailwindcss/oxide
+      run: npm ci
       
     - name: Build project
       run: |
@@ -52,4 +50,4 @@ jobs:
           npm ci
           npm install astro
           npm install send server-destroy
-          PORT=8080 pm2 restart films-r414 || PORT=8080 pm2 start entry.mjs --name films-r414
+          PORT=8083 pm2 restart films-r414 || PORT=8083 pm2 start entry.mjs --name films-r414
