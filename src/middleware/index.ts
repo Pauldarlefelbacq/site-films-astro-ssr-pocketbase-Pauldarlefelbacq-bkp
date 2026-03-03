@@ -3,7 +3,7 @@ import PocketBase from 'pocketbase';
 import { defineMiddleware } from 'astro/middleware';
 
 export const onRequest = defineMiddleware(async ({ locals, request, isPrerendered }, next: () => any) => {
-    locals.pb = new PocketBase(import.meta.env.PB_URL);
+    locals.pb = new PocketBase("https://films-r414.pauldarlef.fr:443");
 
     if (!isPrerendered) {// load the store data from the request cookie string
         locals.pb.authStore.loadFromCookie(request.headers.get('cookie') || '');
