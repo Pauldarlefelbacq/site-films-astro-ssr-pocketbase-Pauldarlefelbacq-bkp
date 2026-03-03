@@ -35,7 +35,7 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 22004
         source: "dist/*"
-        target: "/var/www/films-r414/"
+        target: "/var/www/films-414-2/"
         strip_components: 1
         rm: false
         overwrite: true
@@ -48,7 +48,7 @@ jobs:
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: 22004
         script: |
-          cd /var/www/films-r414/server
+          cd /var/www/films-414-2/server
           npm ci
           npm install astro
           npm install send server-destroy
